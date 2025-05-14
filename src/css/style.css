@@ -201,6 +201,31 @@ button {
   grid-row: 2;
   grid-column: 3;
 }
+.cart {
+  position: relative;  /* Needed for positioning the cart count relative to the cart icon */
+  display: inline-block;
+}
+
+.cart svg {
+  width: 40px;
+  height: 40px;
+}
+
+.cart-count {
+  position: absolute;
+  top: 5px;
+  right: -5px;
+  font-size: 16px;
+  color: black;
+  font-weight: bold;
+  background-color: rgb(254, 190, 80);
+  border-radius: 50%;
+  padding: 2px 6px;
+  display: inline-block;
+}
+
+
+
 
 @media screen and (min-width: 500px) {
   body {

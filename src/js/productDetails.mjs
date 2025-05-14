@@ -1,7 +1,7 @@
 import { findProductById } from "./productData.mjs";
-import { setLocalStorage } from "./utils.mjs";
+import { setLocalStorage, getParam } from "./utils.mjs";
 
-let product = {};
+let product = getParam("product");
 
 export default async function productDetails(productId) {
   // get the details for the current product. findProductById will return a promise! use await or .then() to process it
