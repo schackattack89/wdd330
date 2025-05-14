@@ -1,5 +1,6 @@
 import { findProductById } from "./productData.mjs";
 import { setLocalStorage } from "./utils.mjs";
+import { getLocalStorage } from "./utils.mjs";
 
 let product = {};
 
@@ -12,8 +13,15 @@ export default async function productDetails(productId) {
   document.getElementById("addToCart").addEventListener("click", addToCart);
 }
 function addToCart() {
-  setLocalStorage("so-cart", product);
+  let cart = getLocalStorage("so-cart");
+  // Defensive: ensure cart is an array
+  if (!Array.isArray(cart)) {
+    cart = [];
+  }
+  cart.push(product);
+  setLocalStorage("so-cart", cart);
 }
+
 function renderProductDetails() {
   document.querySelector("#productName").innerText = product.Brand.Name;
   document.querySelector("#productNameWithoutBrand").innerText =
