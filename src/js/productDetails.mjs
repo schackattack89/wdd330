@@ -12,14 +12,12 @@ export default async function productDetails(productId) {
   // once the HTML is rendered we can add a listener to Add to Cart button
   document.getElementById("addToCart").addEventListener("click", addToCart);
 }
-function addToCart() {
+
+function addToCart(product) {
   let cart = getLocalStorage("so-cart");
-  // Defensive: ensure cart is an array
-  if (!Array.isArray(cart)) {
-    cart = [];
-  }
   cart.push(product);
   setLocalStorage("so-cart", cart);
+  alert("Product successfully added to cart!");
 }
 
 function renderProductDetails() {
