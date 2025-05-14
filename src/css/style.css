@@ -105,9 +105,11 @@ button {
 
 .cart svg {
   width: 25px;
+  transition: transform .6s ease-in-out;
 }
 .cart:hover svg {
   fill: gray;
+  transform: scale(1.5) rotate(720deg);
 }
 
 /* End cart icon styles */
