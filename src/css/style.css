@@ -177,6 +177,7 @@ button {
 .card__name {
   font-size: 1em;
 }
+
 /* End product list card */
 
 .product-detail {
@@ -187,6 +188,15 @@ button {
 
 .product-detail img {
   width: 100%;
+}
+
+.discount-tag {
+  padding: .15em;
+  background-color: var(--primary-color);
+}
+
+.strikethrough {
+  text-decoration: line-through;
 }
 
 /* Start cart list card styles */

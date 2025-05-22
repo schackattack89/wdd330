@@ -23,10 +23,18 @@ function addToCart(product) {
 function renderProductDetails() {
   document.querySelector("#productName").innerText = product.Brand.Name;
   document.querySelector("#productNameWithoutBrand").innerText =
-    product.NameWithoutBrand;
+  product.NameWithoutBrand;
   document.querySelector("#productImage").src = product.Image;
   document.querySelector("#productImage").alt = product.Name;
-  document.querySelector("#productFinalPrice").innerText = product.FinalPrice;
+  
+  //TODO: switch to using template literals instead of changing the inner html
+  if (product.discount > 0) {
+    document.querySelector("#productFinalPrice").innerHTML = `<s>${product.FinalPrice}</s> ${product.FinalPrice - (product.FinalPrice * (product.discount / 100))} <span class="discount-tag">${product.discount}% OFF</span>`;
+
+  } else {
+    document.querySelector("#productFinalPrice").innerText = product.FinalPrice
+  }
+
   document.querySelector("#productColorName").innerText =
     product.Colors[0].ColorName;
   document.querySelector("#productDescriptionHtmlSimple").innerHTML =
