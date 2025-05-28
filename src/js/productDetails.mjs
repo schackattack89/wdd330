@@ -29,7 +29,7 @@ function renderProductDetails() {
   
   //TODO: switch to using template literals instead of changing the inner html
   if (product.discount > 0) {
-    document.querySelector("#productFinalPrice").innerHTML = `<s>${product.FinalPrice}</s> ${product.FinalPrice - (product.FinalPrice * (product.discount / 100))} <span class="discount-tag">${product.discount}% OFF</span>`;
+    document.querySelector("#productFinalPrice").innerHTML = `<s>${product.FinalPrice}</s> ${(product.FinalPrice - (product.FinalPrice * (product.discount / 100)).toFixed(2))} <span class="discount-tag">${product.discount}% OFF</span>`;
 
   } else {
     document.querySelector("#productFinalPrice").innerText = product.FinalPrice
