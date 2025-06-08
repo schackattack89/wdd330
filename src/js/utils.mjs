@@ -31,5 +31,44 @@ export function getParam(param) {
 
 export function renderListWithTemplate(templateFn, parentElement, FileList, position="afterbegin", clear=true) {
   const htmlStrings = FileList.map(templateFn);
-  parentElement.insertAdjacentHTML(position, htmlStrings.join(''));
+
+  if (clear) {
+    parentElement.innerHTML = "";
+  }
+
+  parentElement.insertAdjacentHTML(position, htmlStrings.join(""));
+}
+
+export async function renderWithTemplate(templateFn, parentElement, data, callback, position="afterbegin", clear=true) {
+  
+  if (clear) {
+    parentElement.innerHTML = "";
+  }
+  
+  const htmlString = await templateFn(data)
+  parentElement.insertAdjacentHTML(position, htmlString);
+  
+  if (callback) {
+    callback(data);
+  }
+}
+
+export function loadTemplate(path) {
+  return async function() {
+    const res = await fetch(path);
+    if (res.ok) {
+      const html = await res.text();
+      return html;
+    }
+  }
+}
+
+export async function loadHeaderFooter() {
+  let headerTempFn = loadTemplate("/partials/header.html");
+  let footerTempFn = loadTemplate("/partials/footer.html");
+
+  const headerElement = document.querySelector("header");
+  const footerElement = document.querySelector("footer");
+  renderWithTemplate(headerTempFn, headerElement);
+  renderWithTemplate(footerTempFn, footerElement);
 }

@@ -1,6 +1,7 @@
 import { setLocalStorage, getLocalStorage, getParam } from "./utils.mjs";
 import { findProductById } from "./productData.mjs";
 import productDetails from "./productDetails.mjs";
+import { loadHeaderFooter } from "./utils.mjs";
 
 function sanitizeCart(cart) {
   // remove any invalid or junk items like {isTrusted: true}
@@ -43,6 +44,8 @@ async function addToCartHandler(e) {
   }
   addProductToCart(product);
 }
+
+loadHeaderFooter();
 
 // add listener to Add to Cart button
 document

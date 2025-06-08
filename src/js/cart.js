@@ -1,4 +1,5 @@
 import { getLocalStorage } from "./utils.mjs";
+import { loadHeaderFooter } from "./utils.mjs";
 
 // render cart items to the page
 function renderCartContents() {
@@ -85,6 +86,7 @@ function addRemoveListeners() {
   });
 }
 
+loadHeaderFooter();
 renderCartContents();
 
 // clear the cart for testing
