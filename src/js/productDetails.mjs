@@ -21,10 +21,11 @@ function addToCart(product) {
 }
 
 function renderProductDetails() {
+  console.log("Rendering product details for:", product);
   document.querySelector("#productName").innerText = product.Brand.Name;
   document.querySelector("#productNameWithoutBrand").innerText =
   product.NameWithoutBrand;
-  document.querySelector("#productImage").src = product.Image;
+  document.querySelector("#productImage").src = product.Images.PrimaryLarge;
   document.querySelector("#productImage").alt = product.Name;
   
   //TODO: switch to using template literals instead of changing the inner html

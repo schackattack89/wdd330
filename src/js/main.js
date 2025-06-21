@@ -4,4 +4,4 @@ import loadAlerts from "./alerts.mjs";
 loadHeaderFooter()
 loadAlerts();
 
-renderListWithTemplate(productCardTemplate, el, data);
+// renderListWithTemplate(productCardTemplate, el, data);

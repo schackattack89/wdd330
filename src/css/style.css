@@ -136,6 +136,7 @@ button {
 .products {
   padding: 0.5em;
 }
+
 .product-list {
   display: flex;
   flex-flow: row wrap;
@@ -147,6 +148,23 @@ button {
   text-decoration: none;
   color: var(--dark-grey);
 }
+.main {
+  flex: 1 1 45%;
+  margin: 0.25em;
+  padding: 0.5em;
+  border: 0px solid var(--light-grey);
+  max-width: 100px;
+}
+.main h2 {
+  text-align: center;
+  font-size: medium;
+}
+.main li {
+  width: 100px;
+  height: 200px;
+  margin: auto;
+}
+
 /* The alert message box */
 .alert {
   padding: 20px;
@@ -176,6 +194,7 @@ button {
   border: 1px solid var(--light-grey);
   max-width: 250px;
 }
+.product-card li,
 .product-card h2,
 .product-card h3,
 .product-card p {

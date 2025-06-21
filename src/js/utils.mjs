@@ -79,6 +79,15 @@ export async function loadHeaderFooter() {
   const footerTemplateFn = loadTemplate("/partials/footer.html");
   const headerEl = document.querySelector("#main-header");
   const footerEl = document.querySelector("#main-footer");
-  renderWithTemplate(headerTemplateFn, headerEl);
-  renderWithTemplate(footerTemplateFn, footerEl);
+  if (!headerEl) {
+    console.error("Element #main-header not found in DOM.");
+  } else {
+    renderWithTemplate(headerTemplateFn, headerEl);
+  }
+
+  if (!footerEl) {
+    console.error("Element #main-footer not found in DOM.");
+  } else {
+    renderWithTemplate(footerTemplateFn, footerEl);
+  }
 }
