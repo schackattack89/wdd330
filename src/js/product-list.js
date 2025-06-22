@@ -3,4 +3,13 @@ import { getParam, loadHeaderFooter } from "./utils.mjs";
 
 loadHeaderFooter();
 const category = getParam("category");
-productList(".product-list", category);
+const sort = document.querySelector("#sort-list")
+
+sort.addEventListener("change", () => {
+    console.log("changed");
+    
+    let value = sort.value;
+    productList(".product-list", category, value);
+})
+
+productList(".product-list", category, sort.value);

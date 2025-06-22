@@ -32,12 +32,21 @@ export function renderListWithTemplate(
   templateFn,
   parentElement,
   list,
+  sort = "price",
   position = "afterbegin",
   clear = true
 ) {
   if (clear) {
     parentElement.innerHTML = "";
   }
+
+  if (sort == "price")
+  {
+    list.sort((a, b) => b.FinalPrice - a.FinalPrice);
+  } else if (sort == "name") {
+    list.sort((a,b) => a.NameWithoutBrand.localeCompare(b.NameWithoutBrand));
+  }
+
   const htmlString = list.map(templateFn);
   parentElement.insertAdjacentHTML(position, htmlString.join(""));
 }
