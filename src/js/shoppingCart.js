@@ -1,11 +1,36 @@
 import { getLocalStorage, renderListWithTemplate } from "./utils.mjs";
 
+// remove item from cart
+function removeFromCart(itemId) {
+  let cartItems = getLocalStorage("so-cart") || [];
+  console.log("Removing item with Id:", itemId, "from cart", cartItems);
+
+  cartItems = cartItems.filter(item => item.Id != itemId);
+  localStorage.setItem("so-cart", JSON.stringify(cartItems));
+
+  // Re-render the cart by calling the main render function
+  shoppingCart();
+}
+
+// add click listeners to all "Remove" buttons
+function addRemoveListeners() {
+  const buttons = document.querySelectorAll(".remove-button");
+  buttons.forEach((button) => {
+    button.addEventListener("click", (e) => {
+      const itemId = e.target.getAttribute("data-id");
+      console.log("Remove button clicked for itemId:", itemId);
+      removeFromCart(itemId);
+    });
+  });
+}
+
 export default function shoppingCart() {
     const cartItems = getLocalStorage("so-cart");
     const outputElement = document.querySelector(".product-list");
     renderListWithTemplate(cartItemTemplate, outputElement, cartItems);
     const total = calcListTotal(cartItems);
     displayCartTotal(total);
+    addRemoveListeners();
 }
 
 function cartItemTemplate(item) {
@@ -31,12 +56,14 @@ function cartItemTemplate(item) {
 }
 
 function displayCartTotal(total) {
-    if (total > 0) {
-        document.querySelector(".list-footer").classList.remove("hide");
-        document.querySelector(".list-total").innerText += `$${total}`;
-    } else {
-        document.querySelector(".list-footer").classList.add("hide");
-    }
+  const totalElement = document.querySelector(".list-total");
+  if (total > 0) {
+    document.querySelector(".list-footer").classList.remove("hide");
+    totalElement.innerText = `Total: $${total.toFixed(2)}`;
+  } else {
+    document.querySelector(".list-footer").classList.add("hide");
+    totalElement.innerText = "Total: $0"; // clear the total if cart is empty
+  }
 }
 
 function calcListTotal(list) {

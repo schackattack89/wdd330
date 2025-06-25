@@ -7,7 +7,6 @@ const sort = document.querySelector("#sort-list")
 
 sort.addEventListener("change", () => {
     console.log("changed");
-    
     let value = sort.value;
     productList(".product-list", category, value);
 })
