@@ -1,26 +1,22 @@
 const baseURL = import.meta.env.VITE_SERVER_URL;
-function convertToJson(res) {
+
+async function convertToJson(res) {
   if (res.ok) {
     return res.json();
   } else {
-    throw new Error("Bad Response");
+    const errorBody = await res.text();
+    console.error("Server error response:", errorBody);
+    throw {
+      name: 'servicesError',
+      message: `Server responded with error: ${res.status} - ${errorBody}`
+    };
   }
 }
 
-export async function getProductByCategory(category) {
-  const url = `${baseURL}products/search/${category}`;
-  console.log('Fetching:', url); // This should go to port 3000!
-  const response = await fetch(url);
-  const text = await response.text();
-  console.log(text);
-  // const data = await convertToJson(response);
-  // return data.Result;
-  try {
-    const data = JSON.parse(text);
-    return data.Result
-  } catch (e) {
-    throw new Error("Response is not valid JSON");
-  }
+export async function getProductsByCategory(category) {
+  const response = await fetch(baseURL + `products/search/${category}`);
+  const data = await convertToJson(response);
+  return data.Result;
 }
 
 export async function findProductById(id) {
@@ -30,6 +26,9 @@ export async function findProductById(id) {
 }
 
 export async function checkout(payload) {
+  // Ensure cardNumber is a string
+  payload.cardNumber = String(payload.cardNumber);
+
   const options = {
     method: "POST",
     headers: {
