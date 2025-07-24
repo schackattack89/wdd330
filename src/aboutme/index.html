@@ -1,31 +1,79 @@
-<!doctype html>
+<!DOCTYPE html>
+  <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>About Me</title>
+        <link rel="icon" href="/images/icon.jpg">
+        <link rel="stylesheet" href="/css/style.css">
+        <script src="../js/checkout.js" type="module"></script>
+    </head>
+    <body>
+      <header class="divider" id="main-header"></header>
 
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- <title>Sleep Outside | Marmot Ajax 3 person tent</title> -->
-    <link rel="stylesheet" href="../css/style.css" />
-    <script src="../js/product.js" type="module"></script>
-  </head>
+      <main class="divider checkout">
+        <section class="checkout-form">
+          <h2>Review & Place your Order</h2>
+          <form name="checkout">
+            <fieldset>
+              <legend>Shipping</legend>
+              <div class="checkout__name">
+                <label for="fname">First Name</label>
+                <input name="fname" required />
+                <label for="lname">Last Name</label>
+                <input name="lname" required />
+              </div>
+              <div class="checkout__address">
+                <label for="street">Street</label>
+                <input name="street" required />
+                <label for="city">City</label>
+                <input name="city" required />
+                <label for="state">State</label>
+                <input name="state" required />
+                <label for="zip">Zip</label>
+                <input name="zip" id="zip" required />
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>Payment</legend>
+              <label for="cardNumber">Card number</label>
+              <input name="cardNumber" required />
+              <label for="expiration">Expiration</label>
+              <input name="expiration" required />
+              <label for="code">Security Code</label>
+              <input name="code" required />
+            </fieldset>
+            <fieldset class="checkout-summary">
+              <legend>Order Summary</legend>
+              <ul>
+                <li>
+                  <label for="cartTotal"
+                    >Item Subtotal(<span id="num-items"></span>)</label
+                  >
+                  <p name="cartTotal" id="cartTotal"></p>
+                </li>
+                <li>
+                  <label for="shipping">Shipping Estimate</label>
+                  <p id="shipping"></p>
+                </li>
+                <li>
+                  <label for="tax">Tax</label>
+                  <p id="tax"></p>
+                </li>
+                <li>
+                  <label for="orderTotal"><b>Order Total</b></label>
+                  <p id="orderTotal"></p>
+                </li>
+              </ul>
+            </fieldset>
 
-  <body>
-    <header id="main-header" class="divider"></header>
-  
-    <main class="divider">
-      <section class="product-detail">
-        <h3 id="productName"></h3>
-        <h2 class="divider" id="productNameWithoutBrand"></h2>
-        <img id="productImage" class="divider" src="" alt="" />
-        <p class="product-card__price" id="productFinalPrice"></p>
-        <p class="product__color" id="productColorName"></p>
-        <p class="product__description" id="productDescriptionHtmlSimple"></p>
-        <div class="product-detail__add">
-          <button id="addToCart" data-id="">Add to Cart</button>
-        </div>
-      </section>
-    </main>
+            <button id="checkoutSubmit" type="submit">Checkout</button>
+          </form>
+        </section>
+      </main>
 
-    <footer id="main-footer"></footer>
-  </body>
+      <footer id="main-footer"></footer>
+      <script src="../js/checkout.js" type="module"></script>
+    </body>
+
 </html>
