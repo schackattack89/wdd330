@@ -1,11 +1,6 @@
 [
   {
-    "message": "This is only a test",
-    "background": "darkblue",
-    "color": "white"
-  },
-  {
-    "message": "Weekend Sale: 20% off all tents!",
+    "message": "Weekend Sale: 20% off all artworks!",
     "background": "crimson",
     "color": "white"
   }

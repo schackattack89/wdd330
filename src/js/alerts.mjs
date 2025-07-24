@@ -1,12 +1,12 @@
 export default async function loadAlerts() {
   try {
-    const response = await fetch("../json/alerts.json");
+    const response = await fetch("/json/alerts.json");
     if (!response.ok) throw new Error("Failed to load alerts");
     const alerts = await response.json();
 
     if (!Array.isArray(alerts) || alerts.length === 0) return;
 
-    const section = document.createElement("section");
+    const section = document.createElement("h1");
     section.classList.add("alert-list");
 
     alerts.forEach(alert => {
@@ -14,14 +14,18 @@ export default async function loadAlerts() {
       p.textContent = alert.message;
       p.style.background = alert.background || "black";
       p.style.color = alert.color || "white";
-      p.style.padding = "1rem";
+      p.style.position = "fixed";
+      p.style.top = "0";
+      p.style.left = "0";
+      p.style.width = "100%";
+      p.style.padding = "15px";
       p.style.margin = "0";
       section.appendChild(p);
     });
 
-    const main = document.querySelector("main");
-    if (main) {
-      main.prepend(section);
+    const body = document.querySelector("body");
+    if (body) {
+      body.prepend(section);
     }
   } catch (err) {
     console.error("Error loading alerts:", err);

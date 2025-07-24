@@ -1,81 +1,77 @@
-<!doctype html>
-
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title>Sleep Outside | Checkout</title>
-
-    <link rel="stylesheet" href="../css/style.css" />
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Checkout</title>
+      <link rel="icon" href="/images/icon.jpg">
+      <link rel="stylesheet" href="/css/style.css">
+      <script src="../js/checkout.js" type="module"></script>
   </head>
-
   <body>
-    <header class="divider" id="main-header"></header>
-
-    <main class="divider checkout">
-      <section class="checkout-form">
-        <h2>Review & Place your Order</h2>
-        <form name="checkout">
-          <fieldset>
-            <legend>Shipping</legend>
-            <div class="checkout__name">
-              <label for="fname">First Name</label>
-              <input name="fname" required />
-              <label for="lname">Last Name</label>
-              <input name="lname" required />
+      <header class="divider" id="main-header"></header>
+        <nav>
+            <div class="bar-container" onclick="myFunction(this)">
+                <div class="bar1"></div>
+                <div class="bar2"></div>
+                <div class="bar3"></div>
             </div>
-            <div class="checkout__address">
-              <label for="street">Street</label>
-              <input name="street" required />
-              <label for="city">City</label>
-              <input name="city" required />
-              <label for="state">State</label>
-              <input name="state" required />
-              <label for="zip">Zip</label>
-              <input name="zip" id="zip" required />
+        <div id="myDropdown" class="dropdown-content">
+                <a href="/index.html">Portfolio</a>
+                <a href="/shop/index.html">Shop</a>
+                <a href="/aboutme/index.html">About Me</a>
+                <a href="/contactme/index.html">Contact Me</a>
             </div>
-          </fieldset>
-          <fieldset>
-            <legend>Payment</legend>
-            <label for="cardNumber">Card number</label>
-            <input name="cardNumber" required />
-            <label for="expiration">Expiration</label>
-            <input name="expiration" required />
-            <label for="code">Security Code</label>
-            <input name="code" required />
-          </fieldset>
-          <fieldset class="checkout-summary">
-            <legend>Order Summary</legend>
-            <ul>
-              <li>
-                <label for="cartTotal"
-                  >Item Subtotal(<span id="num-items"></span>)</label
-                >
-                <p name="cartTotal" id="cartTotal"></p>
-              </li>
-              <li>
-                <label for="shipping">Shipping Estimate</label>
-                <p id="shipping"></p>
-              </li>
-              <li>
-                <label for="tax">Tax</label>
-                <p id="tax"></p>
-              </li>
-              <li>
-                <label for="orderTotal"><b>Order Total</b></label>
-                <p id="orderTotal"></p>
-              </li>
-            </ul>
-          </fieldset>
+            <script>
+                function myFunction(x) {
+                    x.classList.toggle("change");
+                    const dropdown = document.getElementById("myDropdown");
+                    dropdown.classList.toggle("show");
+                }
+            </script>
+        </nav>
+      <main>
+        <div id="checkout"></div>
+        <script>
+          document.addEventListener("DOMContentLoaded", () => {
+            const artwork = JSON.parse(localStorage.getItem("checkoutArtwork"));
+            const checkoutDiv = document.getElementById("checkout");
 
-          <button id="checkoutSubmit" type="submit">Checkout</button>
-        </form>
-      </section>
-    </main>
+            if (!checkoutDiv) {
+              console.error("checkout container not found");
+              return;
+            }
 
-    <footer id="main-footer"></footer>
-    <script src="../js/checkout.js" type="module"></script>
+            if (!artwork) {
+              checkoutDiv.innerHTML = "<p>No selection found. Please go back and choose a print.</p>";
+              return;
+            }
+
+            checkoutDiv.innerHTML = `
+              <h2>Checkout</h2>
+              <img src="${artwork.image}" alt="${artwork.name}" style="max-width:200px;">
+              <p><strong>Artwork:</strong> ${artwork.name}</p>
+              <p><strong>Details:</strong> ${artwork.date}, ${artwork.medium}, ${artwork.size}</p>
+              <p><strong>Selected Print:</strong> ${artwork.selectedPrint.size} - ${artwork.selectedPrint.price}</p>
+
+              <form id="checkoutForm">
+                <label>Name: <input type="text" name="name" required></label><br>
+                <label>Email: <input type="email" name="email" required></label><br>
+                <button type="submit">Complete Purchase</button>
+              </form>
+            `;
+
+            document.getElementById("checkoutForm").addEventListener("submit", (e) => {
+              e.preventDefault();
+              window.location.href = "success.html";
+            });
+          });
+        </script>
+
+        <div id="checkout"></div>
+      </main>
+      
+      <footer id="main-footer"></footer>
   </body>
+
 </html>
