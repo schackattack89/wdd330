@@ -10,8 +10,29 @@
     </head>
     <body>
       <header class="divider" id="main-header"></header>
+      <nav>
+            <div class="bar-container" onclick="myFunction(this)">
+                <div class="bar1"></div>
+                <div class="bar2"></div>
+                <div class="bar3"></div>
+            </div>
+        <div id="myDropdown" class="dropdown-content">
+                <a href="/index.html">Portfolio</a>
+                <a href="/shop/index.html">Shop</a>
+                <a href="/aboutme/index.html">About Me</a>
+                <a href="/contactme/index.html">Contact Me</a>
+            </div>
+            <script>
+                function myFunction(x) {
+                    x.classList.toggle("change");
+                    const dropdown = document.getElementById("myDropdown");
+                    dropdown.classList.toggle("show");
+                }
+            </script>
+        </nav>
 
       <main class="divider checkout">
+        <div class="checkout-summary"></div>
         <section class="checkout-form">
           <h2>Review & Place your Order</h2>
           <form name="checkout">
@@ -46,10 +67,16 @@
             <fieldset class="checkout-summary">
               <legend>Order Summary</legend>
               <ul>
+                <!-- Discount Line -->
                 <li>
-                  <label for="cartTotal"
-                    >Item Subtotal(<span id="num-items"></span>)</label
-                  >
+                  <label for="discount">Weekend Sale (20% Off)</label>
+                  <p id="discount" style="color: green;"></p>
+                </li>
+                <li>
+                  <label for="cartTotal">
+                    <!-- Item Subtotal (<span id="num-items"></span>) -->
+                    Item Subtotal
+                  </label>
                   <p name="cartTotal" id="cartTotal"></p>
                 </li>
                 <li>
@@ -67,13 +94,14 @@
               </ul>
             </fieldset>
 
+
             <button id="checkoutSubmit" type="submit">Checkout</button>
+            <br><br>
           </form>
         </section>
       </main>
 
       <footer id="main-footer"></footer>
-      <script src="../js/checkout.js" type="module"></script>
     </body>
 
 </html>

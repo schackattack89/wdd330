@@ -1,4 +1,9 @@
 export default async function loadAlerts() {
+  // Check if it's Saturday (6) or Sunday (0)
+  const today = new Date();
+  const isWeekend = today.getDay() === 0 || today.getDay() === 6;
+  if (!isWeekend) return; // Exit early if not weekend
+
   try {
     const response = await fetch("/json/alerts.json");
     if (!response.ok) throw new Error("Failed to load alerts");
