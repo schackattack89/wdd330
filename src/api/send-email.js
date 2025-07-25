@@ -1,5 +1,7 @@
 import nodemailer from 'nodemailer';
 import express from 'express';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const router = express.Router();
 
@@ -12,16 +14,16 @@ router.post('/send-email', async (req, res) => {
 
   try {
     const transporter = nodemailer.createTransport({
-      service: 'gmail', // or your preferred service
+      service: 'gmail',
       auth: {
-        user: 'your_email@gmail.com',
-        pass: 'your_app_password' // Gmail requires an App Password
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_PASS
       }
     });
 
     const mailOptions = {
       from: user_email,
-      to: 'your_email@gmail.com',
+      to: 'shanebasham28@gmail.com',
       subject: `New message from ${user_name}`,
       text: user_message
     };

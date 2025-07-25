@@ -13,7 +13,6 @@ export function setLocalStorage(key, data) {
 // set a listener for both touchend and click
 export function setClick(selector, callback) {
   qs(selector).addEventListener("touchend", (event) => {
-    event.preventDefault();
     callback();
   });
   qs(selector).addEventListener("click", callback);
@@ -56,18 +55,13 @@ export async function renderWithTemplate(
   position = "afterbegin",
   clear = true
 ) {
-  if (clear) {
-    parentElement.innerHTML = "";
-  }
+  if (clear) parentElement.innerHTML = "";
   const htmlString = await templateFn(data);
   parentElement.insertAdjacentHTML(position, htmlString);
-  if (callback) {
-    callback(data);
-  }
+  if (callback) callback(data);
 }
 
 function loadTemplate(path) {
-  // wait what?  we are returning a new function? this is called currying and can be very helpful.
   return async function () {
     const res = await fetch(path);
     if (res.ok) {
@@ -82,16 +76,13 @@ export async function loadHeaderFooter() {
   const footerTemplateFn = loadTemplate("/partials/footer.html");
   const headerEl = document.querySelector("#main-header");
   const footerEl = document.querySelector("#main-footer");
-  if (!headerEl) {
-    console.error("Element #main-header not found in DOM.");
-  } else {
-    renderWithTemplate(headerTemplateFn, headerEl);
+  if (headerEl) {
+    headerEl.innerHTML = '';
+    await renderWithTemplate(headerTemplateFn, headerEl);
   }
-
-  if (!footerEl) {
-    console.error("Element #main-footer not found in DOM.");
-  } else {
-    renderWithTemplate(footerTemplateFn, footerEl);
+  if (footerEl) {
+    footerEl.innerHTML = '';
+    await renderWithTemplate(footerTemplateFn, footerEl);
   }
 }
 

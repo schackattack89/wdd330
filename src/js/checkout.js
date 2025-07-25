@@ -1,8 +1,13 @@
 import { loadHeaderFooter, removeAllAlerts } from "./utils.mjs";
+import { initLoginModal } from './login.js';
 //import checkoutProcess from "./checkoutProcess.mjs";
 
-loadHeaderFooter();
-removeAllAlerts();
+window.addEventListener('DOMContentLoaded', async () => {
+  await loadHeaderFooter();
+  removeAllAlerts();
+  initLoginModal();
+});
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const artwork = JSON.parse(localStorage.getItem("checkoutArtwork"));
@@ -59,8 +64,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 document.querySelector("form[name='checkout']").addEventListener("submit", function (e) {
-  e.preventDefault(); // prevent actual form submit
-  // Optionally validate fields here...
   console.log("Checkout submitted. Redirecting to success page...");
   window.location.href = "/checkout/success.html";
 });

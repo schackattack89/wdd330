@@ -1,9 +1,13 @@
 import { loadHeaderFooter, getParam } from "./utils.mjs";
+import { initLoginModal } from './login.js';
 import loadAlerts from "./alerts.mjs";
 import artworkDetails from "./artwork-details.mjs";
 
-loadHeaderFooter();
-loadAlerts();
+window.addEventListener('DOMContentLoaded', async () => {
+  await loadHeaderFooter();
+  loadAlerts();
+  initLoginModal();
+});
 
 const artworkId = getParam("art");
 artworkDetails(artworkId);

@@ -3,17 +3,24 @@
 html {
   scroll-behavior: smooth;
  }
-
-#content {
-    max-width: 1600px;
-    margin: 0 auto;
+/* html, body, header, main {
+  width: 100% !important;
+  max-width: none !important;
+} */
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+  background-color: white;
 }
-
+main {
+  padding: 0px;
+}
 .icon {
   border-radius: 50%;
 }
 
-/* Full-width input fields */
+/* input fields */
 input[type=text], input[type=password] {
     width: 100%;
     padding: 12px 20px;
@@ -22,7 +29,7 @@ input[type=text], input[type=password] {
     border: 1px solid black;
     box-sizing: border-box;
   }
-  /* Set a style for all buttons */
+  /* style for all buttons */
   button {
     height: 20px;
     float: right;
@@ -54,6 +61,34 @@ input[type=text], input[type=password] {
     color: aqua;
     border-color: aqua;
   }
+
+
+.auth-container {
+  position: absolute;
+  top: 0.5rem;
+  right: 1rem;
+  text-align: right;
+  z-index: 10;
+}
+.logout-btn,
+.login {
+  background-color: black;
+  color: white;
+  border: none;
+  border: 1px solid white;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.logout-btn:hover,
+.login:hover {
+  color: aqua;
+}
+.welcome-msg {
+  margin-top: 0.2rem;
+  font-size: 0.8rem;
+  color: white;
+}
+
   /* Extra styles for the cancel button */
   .cancelbtn {
     width: auto;
@@ -76,7 +111,7 @@ input[type=text], input[type=password] {
   }
   span.psw {
     float: right;
-    padding-top: 16px;
+    padding-top: 8px;
   }
   /* The Modal (background) */
   .modal {
@@ -154,6 +189,10 @@ header {
   text-align: center;
   border: 4px solid white;
 }
+header#site-header {
+  position: relative;
+  padding-top: 3rem;
+}
 nav {
   border-bottom: 4px solid white;
   background-color: black;
@@ -224,12 +263,7 @@ nav a:hover{
   color: aqua;
 }
 
-html, body {
-    width: 100%;
-    height: 100%;
-    margin: 0px;
-    background-color: white;
-}
+
 .home-grid {
   margin: 0px;
   display: grid;
@@ -613,27 +647,10 @@ a:-webkit-any-link {
 
 
 
-.main {
-  flex: 1 1 45%;
-  margin: 0.25em;
-  padding: 0.5em;
-  border: 0px solid var(--light-grey);
-  max-width: 100px;
-}
-.main h2 {
-  text-align: center;
-  font-size: medium;
-}
-.main li {
-  width: 100px;
-  height: 200px;
-  margin: auto;
-}
-
 /* The alert message box */
 .alert {
   padding: 20px;
-  background-color: #f44336; /* Red */
+  background-color: red;
   color: white;
   margin-bottom: 15px;
 }
@@ -683,23 +700,4 @@ a:-webkit-any-link {
 .checkout-summary input {
   width: 25%;
   font-size: 1em;
-}
-
-@media screen and (min-width: 500px) {
-  body {
-    max-width: 1080px;
-    margin: auto;
-  }
-  .mission {
-    font-size: 1.2em;
-  }
-  .cart-card {
-    font-size: inherit;
-    grid-template-columns: 150px auto 15%;
-  }
-}
-
-footer {
-  font-size: var(--small-font);
-  padding: 1em;
 }
