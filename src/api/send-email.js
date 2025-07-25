@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 import express from 'express';
 import dotenv from 'dotenv';
-dotenv.config();
+dotenv.config({ path: './.env' });
 
 const router = express.Router();
 
@@ -13,6 +13,8 @@ router.post('/send-email', async (req, res) => {
   }
 
   try {
+    console.log("GMAIL_USER:", process.env.GMAIL_USER);
+    console.log("GMAIL_PASS:", process.env.GMAIL_PASS ? "exists" : "missing");
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {

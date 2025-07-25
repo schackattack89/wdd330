@@ -4,13 +4,23 @@ import loadAlerts from "./alerts.mjs";
 import artworkDetails from "./artwork-details.mjs";
 
 window.addEventListener('DOMContentLoaded', async () => {
-  await loadHeaderFooter();
-  loadAlerts();
-  initLoginModal();
+  try {
+    await loadHeaderFooter();
+    loadAlerts();
+    initLoginModal();
+  } catch (error) {
+    console.error("Error during initial load:", error);
+  }
 });
 
 const artworkId = getParam("art");
-artworkDetails(artworkId);
+if (artworkId) {
+  try {
+    artworkDetails(artworkId);
+  } catch (error) {
+    console.error("Error loading artwork details:", error);
+  }
+}
 
 function setupModal() {
   let modal = document.querySelector("#artworkModal");
@@ -59,12 +69,15 @@ function setupModal() {
 
     document.body.appendChild(modal);
 
-    // Close modal on button click
-    modal.querySelector("#modalCloseBtn").addEventListener("click", () => {
-      modal.style.display = "none";
-    });
+    const closeBtn = modal.querySelector("#modalCloseBtn");
+    if (closeBtn) {
+      closeBtn.addEventListener("click", () => {
+        modal.style.display = "none";
+      });
+    } else {
+      console.warn("setupModal: Close button not found");
+    }
 
-    // Close modal when clicking outside modal content
     modal.addEventListener("click", (e) => {
       if (e.target === modal) modal.style.display = "none";
     });
@@ -72,148 +85,185 @@ function setupModal() {
 }
 
 function openModal(artwork) {
+  if (!artwork || typeof artwork !== "object") {
+    console.warn("openModal: Invalid artwork object");
+    return;
+  }
+
   const modal = document.querySelector("#artworkModal");
-  if (!modal) return;
+  if (!modal) {
+    console.warn("openModal: Modal element not found");
+    return;
+  }
 
-  const printsHTML = artwork.prints && Object.keys(artwork.prints).length > 0
-    ? `<br><strong>Available Prints:</strong><br>` + 
-      Object.entries(artwork.prints)
-        .map(([key, val]) => `${key} - ${val}`)
-        .join("<br>")
-    : "";
-  const originalHTML = artwork.original
-    ? `<br>Original - ${artwork.original}`
-    : "";
+  try {
+    const modalImg = modal.querySelector("#modalImg");
+    const modalTitle = modal.querySelector("#modalTitle");
+    const modalDetails = modal.querySelector("#modalDetails");
 
-  const allButtonsHTML = printsHTML + originalHTML;
+    if (!modalImg || !modalTitle || !modalDetails) {
+      console.warn("openModal: Modal sub-elements missing");
+      return;
+    }
 
-  modal.querySelector("#modalImg").src = artwork.src;
-  modal.querySelector("#modalImg").alt = artwork.name;
-  modal.querySelector("#modalTitle").textContent = artwork.name;
-  modal.querySelector("#modalDetails").innerHTML = `
-    <strong>Date:</strong> ${artwork.date}<br>
-    <strong>Medium:</strong> ${artwork.medium}<br>
-    <strong>Size:</strong> ${artwork.size}<br>
-    ${allButtonsHTML}
-    ${artwork.description ? `<br><strong>Description:</strong> ${artwork.description}` : ""}
-  `;
+    const printsHTML = artwork.prints && Object.keys(artwork.prints).length > 0
+      ? `<br><strong>Available Prints:</strong><br>` +
+        Object.entries(artwork.prints)
+          .map(([key, val]) => `${key} - ${val}`)
+          .join("<br>")
+      : "";
+    const originalHTML = artwork.original
+      ? `<br>Original - ${artwork.original}`
+      : "";
 
-  modal.style.display = "flex";
+    modalImg.src = artwork.src || "";
+    modalImg.alt = artwork.name || "Artwork image";
+    modalTitle.textContent = artwork.name || "Untitled";
+    modalDetails.innerHTML = `
+      <strong>Date:</strong> ${artwork.date || "Unknown"}<br>
+      <strong>Medium:</strong> ${artwork.medium || "Unknown"}<br>
+      <strong>Size:</strong> ${artwork.size || "Unknown"}<br>
+      ${printsHTML}
+      ${originalHTML}
+      ${artwork.description ? `<br><strong>Description:</strong> ${artwork.description}` : ""}
+    `;
+
+    modal.style.display = "flex";
+  } catch (error) {
+    console.error("openModal: Error updating modal content", error);
+  }
 }
 
 async function loadAllArtworks() {
   try {
     const response = await fetch("/json/artworks.json");
-    if (!response.ok) throw new Error("Unable to load artworks data.");
+    if (!response.ok) throw new Error(`Unable to load artworks data. Status: ${response.status}`);
 
     const artworks = await response.json();
+    if (!Array.isArray(artworks)) {
+      console.error("loadAllArtworks: artworks.json did not return an array");
+      return;
+    }
 
     const container = document.querySelector(".home-grid");
     if (!container) {
-      console.error("No container to display artworks");
+      console.error("loadAllArtworks: No container element found with class 'home-grid'");
       return;
     }
 
     container.innerHTML = "";
 
     artworks.forEach((art) => {
-        const printsHTML = art.prints
-            ? Object.entries(art.prints)
-                .map(
-                ([key, val]) =>
-                    `<button class="print-btn" data-size="${key}" data-price="${val}">
-                    ${key} - ${val}
-                    </button>`
-                )
-                .join("")
-            : "";
+      if (!art || typeof art !== "object") {
+        console.warn("loadAllArtworks: Invalid artwork item skipped", art);
+        return;
+      }
 
-        const originalHTML = art.original
-            ? `<button class="print-btn original-btn" data-size="Original" data-price="${art.original}">
-                Original - ${art.original}
-            </button>`
-            : "";
+      const printsHTML = art.prints
+        ? Object.entries(art.prints)
+            .map(
+              ([key, val]) =>
+                `<button class="print-btn" data-size="${key}" data-price="${val}">
+                  ${key} - ${val}
+                </button>`
+            )
+            .join("")
+        : "";
 
-        const allButtonsHTML = printsHTML + originalHTML;
+      const originalHTML = art.original
+        ? `<button class="print-btn original-btn" data-size="Original" data-price="${art.original}">
+            Original - ${art.original}
+          </button>`
+        : "";
 
-        const div = document.createElement("div");
-        div.classList.add("myImages");
+      const allButtonsHTML = printsHTML + originalHTML;
 
-        console.log("Image path for modal:", JSON.stringify(art.src));
-        console.log("Image source:", art.src);
-        div.innerHTML = `
-            <img class="myImages" src="${art.src}" alt="${art.name}" />
-            <h2>${art.name}</h2>
-            <h3>
-            <br><br>
-            ${art.date}<br>
-            ${art.medium}<br>
-            ${art.size}<br><br>
-            <strong>Available Prints:</strong><br>
-            ${allButtonsHTML}
-            </h3>
-            <button class="purchaseBtn">PURCHASE</button>
-        `;
-        div.querySelector("h3").style.height = "220px";
+      const div = document.createElement("div");
+      div.classList.add("myImages");
 
-        // Only open modal on image click
-        div.addEventListener("click", (e) => {
-            if (e.target.classList.contains("myImages")) {
-            openModal(art);
-            }
+      div.innerHTML = `
+        <img class="myImages" src="${art.src || ""}" alt="${art.name || "Artwork"}" />
+        <h2>${art.name || "Untitled"}</h2>
+        <h3 style="height: 220px;">
+          <br><br>
+          ${art.date || "Unknown"}<br>
+          ${art.medium || "Unknown"}<br>
+          ${art.size || "Unknown"}<br><br>
+          <strong>Available Prints:</strong><br>
+          ${allButtonsHTML}
+        </h3>
+        <button class="purchaseBtn">PURCHASE</button>
+      `;
+
+      // Only open modal on image click
+      div.addEventListener("click", (e) => {
+        if (e.target.classList.contains("myImages")) {
+          openModal(art);
+        }
+      });
+
+      // Track selected print
+      let selectedPrint = null;
+
+      div.querySelectorAll(".print-btn").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation(); // Prevent triggering div click
+          div.querySelectorAll(".print-btn").forEach((b) => b.classList.remove("selected"));
+          btn.classList.add("selected");
+          selectedPrint = {
+            size: btn.dataset.size,
+            price: btn.dataset.price,
+          };
         });
+      });
 
-        // Track selected print
-        let selectedPrint = null;
-
-        div.querySelectorAll(".print-btn").forEach((btn) => {
-            btn.addEventListener("click", (e) => {
-            div.querySelectorAll(".print-btn").forEach((b) =>
-                b.classList.remove("selected")
-            );
-            btn.classList.add("selected");
-            selectedPrint = {
-                size: btn.dataset.size,
-                price: btn.dataset.price,
-            };
-            });
-        });
-
-        // Handle purchase button click
-        div.querySelector(".purchaseBtn").addEventListener("click", (e) => {
-            e.stopPropagation();
-            if (!selectedPrint) {
+      // Handle purchase button click
+      const purchaseBtn = div.querySelector(".purchaseBtn");
+      if (purchaseBtn) {
+        purchaseBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          if (!selectedPrint) {
             alert("Please select a print or the original before purchasing.");
             return;
-            }
+          }
 
-            const selectedArtwork = {
-            name: art.name,
-            image: art.src,
-            date: art.date,
-            medium: art.medium,
-            size: art.size,
+          const selectedArtwork = {
+            name: art.name || "",
+            image: art.src || "",
+            date: art.date || "",
+            medium: art.medium || "",
+            size: art.size || "",
             selectedPrint: selectedPrint,
-            };
+          };
 
+          try {
             localStorage.setItem("checkoutArtwork", JSON.stringify(selectedArtwork));
             window.location.href = "/checkout/index.html";
+          } catch (err) {
+            console.error("Error saving checkout data:", err);
+            alert("There was a problem processing your purchase. Please try again.");
+          }
         });
+      } else {
+        console.warn("loadAllArtworks: Purchase button missing for artwork", art);
+      }
 
-        container.appendChild(div);
-        });
-
+      container.appendChild(div);
+    });
   } catch (err) {
     console.error("Error loading artworks:", err);
   }
 }
 
-// Initialize modal and load artworks if no "art" param
 document.addEventListener("DOMContentLoaded", () => {
-  setupModal();
+  try {
+    setupModal();
 
-  const urlParams = new URLSearchParams(window.location.search);
-  if (!urlParams.has("art")) {
-    loadAllArtworks();
+    const urlParams = new URLSearchParams(window.location.search);
+    if (!urlParams.has("art")) {
+      loadAllArtworks();
+    }
+  } catch (error) {
+    console.error("Error in DOMContentLoaded handler:", error);
   }
 });

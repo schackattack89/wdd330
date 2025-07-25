@@ -37,7 +37,6 @@ input[type=text], input[type=password] {
     background-color: black;
     border: 1px solid white;
     color: white;
-
     cursor: pointer;
     width: 100%;
     font-family: "Comic Neue", Helvetica, sans-serif;
@@ -99,6 +98,17 @@ input[type=text], input[type=password] {
     color: aqua;
     border-color: aqua;
   }
+
+  .toggle-modal-link {
+    text-align: center;
+    float: left;
+    margin: 5px;
+    padding: 0px;
+  }
+  .toggle-modal-link:hover {
+    color: aqua;
+    border-color: aqua;
+  }
   /* Center the image and position the close button */
   .imgcontainer {
     text-align: center;
@@ -110,8 +120,8 @@ input[type=text], input[type=password] {
     border-radius: 50%;
   }
   span.psw {
-    float: right;
-    padding-top: 8px;
+    float: left;
+    text-align: center;
   }
   /* The Modal (background) */
   .modal {

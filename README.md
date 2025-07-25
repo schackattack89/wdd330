@@ -8,7 +8,7 @@ This portfolio is designed for art enthusiasts interested in the my style and ev
 C. Data Sources
 Local JSON file: has data about each artwork (title, year, medium, dimensions, description)
 
-External API: social media? instagram posts?
+External API: social media? instagram posts? email
 
 localStorage: preferences, saved favorites
 
@@ -21,7 +21,7 @@ User interaction tracking: saved to localStorage for features like "Recently Vie
 D. Technologies & Features
 localStorage: saves user preferences like dark/light mode, font size, and bookmarked artworks
 
-External API: integration with Instagram or fetching artist posts or updates on about me page
+External API: integration with Instagram or fetching artist posts or updates on about me page or sending emails
 
 Local JSON File: artwork data including titles, media, descriptions, and gallery groupings will be structured in a local JSON file for easy parsing and rendering
 

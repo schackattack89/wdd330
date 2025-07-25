@@ -1,102 +1,159 @@
 export function initLoginModal() {
   console.log("initLoginModal called");
-  const loginBtn = document.getElementById('loginBtn');
-  console.log("loginBtn:", loginBtn);
-  const modal = document.getElementById('id01');
-  const cancelBtn = document.getElementById('cancelBtn');
-  const loginForm = document.getElementById('loginForm');
-  const unameInput = document.getElementById('uname');
-  const pswInput = document.getElementById('psw');
-  const rememberCheckbox = document.getElementById('remember');
-  // Check both localStorage and sessionStorage for auth info
-  const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
-  const username = localStorage.getItem('username') || sessionStorage.getItem('username');
-  if (token && username) {
-   updateLoginUI(username);
-  } else {
-   updateLoginUI(null);
+
+  const loginBtn = document.getElementById("loginBtn");
+  const modal = document.getElementById("id01");
+  const cancelBtn = document.getElementById("cancelBtn");
+  const loginForm = document.getElementById("loginForm");
+  const unameInput = document.getElementById("uname");
+  const pswInput = document.getElementById("psw");
+  const rememberCheckbox = document.getElementById("remember");
+  const authContainer = document.getElementById("authContainer");
+
+  const loginFormContainer = document.getElementById("loginFormContainer");
+  const createAccountFormContainer = document.getElementById("createAccountFormContainer");
+  const showCreateAccountBtn = document.getElementById("showCreateAccountBtn");
+  const showLoginBtn = document.getElementById("showLoginBtn");
+  const cancelCreateAccountBtn = document.getElementById("cancelCreateAccountBtn");
+  const createAccountForm = document.getElementById("createAccountForm");
+
+  if (!modal || !loginBtn || !cancelBtn || !loginForm || !unameInput || !pswInput || !rememberCheckbox || !authContainer) {
+    console.warn("initLoginModal: Required elements missing, aborting init");
+    return;
   }
 
-  if (!modal || !loginBtn || !cancelBtn || !loginForm) return;
+  // Load auth status from storage
+  const token = localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
+  const username = localStorage.getItem("username") || sessionStorage.getItem("username");
+  updateLoginUI(username);
 
-  loginBtn.addEventListener('click', () => {
-    modal.style.display = 'block';
-    const loginInfo = sessionStorage.getItem('loginInfo');
-    if (loginInfo) {
-      const info = JSON.parse(loginInfo);
-      unameInput.value = info.username || '';
-      pswInput.value = info.password || '';
-      rememberCheckbox.checked = info.remember || false;
-    }
+  // Show modal on login button click
+  loginBtn.addEventListener("click", () => {
+    modal.style.display = "block";
   });
 
-  cancelBtn.addEventListener('click', () => {
-    modal.style.display = 'none';
+  cancelBtn.addEventListener("click", () => {
+    modal.style.display = "none";
   });
 
-loginForm.addEventListener('submit', async (e) => {
+  // LOGIN FORM SUBMIT
+  loginForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    console.log('Login submitted');
-    const username = unameInput.value;
-    const password = pswInput.value;
+
+    const loginInput = unameInput.value.trim(); // could be username or email
+    const password = pswInput.value.trim();
     const remember = rememberCheckbox.checked;
 
-    try {
-        const response = await fetch('http://localhost:3000/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-        });
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
 
-        if (!response.ok) {
-        const error = await response.json();
-        console.log('Login failed error:', error);
-        alert(error.message || 'Login failed');
-        return;
-        }
+    const user = users.find(
+      (u) =>
+        (u.username === loginInput || u.email === loginInput) &&
+        u.password === password
+    );
 
-        const data = await response.json();
-        console.log('Login successful:', data);
-
-        if (remember) {
-        localStorage.setItem('authToken', data.token);
-        localStorage.setItem('username', data.username);
-        } else {
-        sessionStorage.setItem('authToken', data.token);
-        sessionStorage.setItem('username', data.username);
-        }
-
-        modal.style.display = 'none';
-        updateLoginUI(data.username);
-
-    } catch (error) {
-        alert('Login error, please try again');
-        console.log('Inside catch block');
-        console.error('Login request failed:', error);
+    if (!user) {
+      alert("Invalid username/email or password.");
+      return;
     }
-    }); 
-}
 
-function updateLoginUI(username) {
-  const authContainer = document.getElementById('authContainer');
-  if (!authContainer) return;
-  if (username) {
-    authContainer.innerHTML = `
-      <button id="logoutBtn" class="logout-btn">Logout</button>
-      <div class="welcome-msg">Welcome, ${username}</div>
-    `;
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-        sessionStorage.removeItem('authToken');
-        sessionStorage.removeItem('username');
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('username');
+    const nameToDisplay = user.username || user.email;
+
+    if (remember) {
+      localStorage.setItem("authToken", "demo-token");
+      localStorage.setItem("username", nameToDisplay);
+    } else {
+      sessionStorage.setItem("authToken", "demo-token");
+      sessionStorage.setItem("username", nameToDisplay);
+    }
+
+    modal.style.display = "none";
+    updateLoginUI(nameToDisplay);
+  });
+
+  // CREATE ACCOUNT TOGGLE
+  showCreateAccountBtn?.addEventListener("click", () => {
+    loginFormContainer.style.display = "none";
+    createAccountFormContainer.style.display = "block";
+  });
+
+  showLoginBtn?.addEventListener("click", () => {
+    createAccountFormContainer.style.display = "none";
+    loginFormContainer.style.display = "block";
+  });
+
+  cancelCreateAccountBtn?.addEventListener("click", () => {
+    createAccountFormContainer.style.display = "none";
+    loginFormContainer.style.display = "block";
+  });
+
+  // CREATE ACCOUNT FORM SUBMIT
+  createAccountForm?.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const username = document.getElementById("registerUsername").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("newPassword").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+
+    if (!username || username.length < 3) {
+        alert("Please enter a username (at least 3 characters).");
+        return;
+    }
+    if (!validateEmail(email)) {
+        alert("Please enter a valid email.");
+        return;
+    }
+    if (password.length < 6) {
+        alert("Password must be at least 6 characters.");
+        return;
+    }
+    if (password !== confirmPassword) {
+        alert("Passwords do not match.");
+        return;
+    }
+
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
+    if (users.find((u) => u.username === username || u.email === email)) {
+        alert("This username or email is already registered.");
+        return;
+    }
+
+    users.push({ username, email, password });
+    localStorage.setItem("users", JSON.stringify(users));
+
+    alert("Account created! Please log in.");
+
+    createAccountFormContainer.style.display = "none";
+    loginFormContainer.style.display = "block";
+    unameInput.value = email;
+    });
+
+  function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  }
+
+  function updateLoginUI(username) {
+    if (!authContainer) return;
+
+    if (username) {
+      authContainer.innerHTML = `
+        <button id="logoutBtn" class="logout-btn">Logout</button>
+        <div class="welcome-msg">Welcome, ${username}</div>
+      `;
+      document.getElementById("logoutBtn")?.addEventListener("click", () => {
+        sessionStorage.removeItem("authToken");
+        sessionStorage.removeItem("username");
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("username");
         location.reload();
-    });
-  } else {
-
-    authContainer.innerHTML = `<button id="loginBtn" class="login">Login</button>`;
-    document.getElementById('loginBtn').addEventListener('click', () => {
-      document.getElementById('id01').style.display = 'block';
-    });
+      });
+    } else {
+      authContainer.innerHTML = `<button id="loginBtn" class="login">Login</button>`;
+      document.getElementById("loginBtn")?.addEventListener("click", () => {
+        modal.style.display = "block";
+      });
+    }
   }
 }

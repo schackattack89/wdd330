@@ -4,13 +4,23 @@ import loadAlerts from "./alerts.mjs";
 import artworkDetails from "./artwork-details.mjs";
 
 window.addEventListener('DOMContentLoaded', async () => {
-  await loadHeaderFooter();
-  loadAlerts();
-  initLoginModal();
+  try {
+    await loadHeaderFooter();
+    loadAlerts();
+    initLoginModal();
+  } catch (error) {
+    console.error("Error during initial load:", error);
+  }
 });
 
 const artworkId = getParam("art");
-artworkDetails(artworkId);
+if (artworkId) {
+  try {
+    artworkDetails(artworkId);
+  } catch (error) {
+    console.error("Error loading artwork details:", error);
+  }
+}
 
 function setupModal() {
   let modal = document.querySelector("#artworkModal");
@@ -60,9 +70,14 @@ function setupModal() {
     document.body.appendChild(modal);
 
     // Close modal on button click
-    modal.querySelector("#modalCloseBtn").addEventListener("click", () => {
-      modal.style.display = "none";
-    });
+    const closeBtn = modal.querySelector("#modalCloseBtn");
+    if (closeBtn) {
+      closeBtn.addEventListener("click", () => {
+        modal.style.display = "none";
+      });
+    } else {
+      console.warn("setupModal: Close button not found");
+    }
 
     // Close modal when clicking outside modal content
     modal.addEventListener("click", (e) => {
@@ -72,49 +87,80 @@ function setupModal() {
 }
 
 function openModal(artwork) {
+  if (!artwork || typeof artwork !== "object") {
+    console.warn("openModal: Invalid artwork object");
+    return;
+  }
+
   const modal = document.querySelector("#artworkModal");
-  if (!modal) return;
+  if (!modal) {
+    console.warn("openModal: Modal element not found");
+    return;
+  }
 
-  modal.querySelector("#modalImg").src = artwork.src;
-  modal.querySelector("#modalImg").alt = artwork.name;
-  modal.querySelector("#modalTitle").textContent = artwork.name;
-  modal.querySelector("#modalDetails").innerHTML = `
-    <strong>Date:</strong> ${artwork.date}<br>
-    <strong>Medium:</strong> ${artwork.medium}<br>
-    <strong>Size:</strong> ${artwork.size}<br>
-    ${artwork.description ? `<strong>Description:</strong> ${artwork.description}` : ""}
-  `;
+  try {
+    const modalImg = modal.querySelector("#modalImg");
+    const modalTitle = modal.querySelector("#modalTitle");
+    const modalDetails = modal.querySelector("#modalDetails");
 
-  modal.style.display = "flex";
+    if (!modalImg || !modalTitle || !modalDetails) {
+      console.warn("openModal: Modal sub-elements missing");
+      return;
+    }
+
+    modalImg.src = artwork.src || "";
+    modalImg.alt = artwork.name || "Artwork image";
+    modalTitle.textContent = artwork.name || "Untitled";
+
+    modalDetails.innerHTML = `
+      <strong>Date:</strong> ${artwork.date || "Unknown"}<br>
+      <strong>Medium:</strong> ${artwork.medium || "Unknown"}<br>
+      <strong>Size:</strong> ${artwork.size || "Unknown"}<br>
+      ${artwork.description ? `<strong>Description:</strong> ${artwork.description}` : ""}
+    `;
+
+    modal.style.display = "flex";
+  } catch (error) {
+    console.error("openModal: Error displaying modal content", error);
+  }
 }
 
 async function loadAllArtworks() {
   try {
     const response = await fetch("/json/artworks.json");
-    if (!response.ok) throw new Error("Unable to load artworks data.");
+    if (!response.ok) throw new Error(`Unable to load artworks data, status: ${response.status}`);
 
     const artworks = await response.json();
+    if (!Array.isArray(artworks)) {
+      console.error("loadAllArtworks: artworks.json did not return an array");
+      return;
+    }
 
     const container = document.querySelector(".home-grid");
     if (!container) {
-      console.error("No container to display artworks");
+      console.error("loadAllArtworks: No container element found with class 'home-grid'");
       return;
     }
 
     container.innerHTML = "";
 
     artworks.forEach((art) => {
+      if (!art || typeof art !== "object") {
+        console.warn("loadAllArtworks: Invalid artwork item skipped", art);
+        return;
+      }
+
       const div = document.createElement("div");
       div.classList.add("myImages");
 
       div.innerHTML = `
-        <img class="myImages" src="${art.src}" alt="${art.name}" />
-        <h2>${art.name}</h2>
+        <img class="myImages" src="${art.src || ""}" alt="${art.name || "Artwork"}" />
+        <h2>${art.name || "Untitled"}</h2>
         <h3>
           ...<br><br>
-          ${art.date}<br>
-          ${art.medium}<br>
-          ${art.size}
+          ${art.date || "Unknown"}<br>
+          ${art.medium || "Unknown"}<br>
+          ${art.size || "Unknown"}
         </h3>
       `;
 
@@ -131,10 +177,14 @@ async function loadAllArtworks() {
 
 // Initialize modal and load artworks if no "art" param
 document.addEventListener("DOMContentLoaded", () => {
-  setupModal();
+  try {
+    setupModal();
 
-  const urlParams = new URLSearchParams(window.location.search);
-  if (!urlParams.has("art")) {
-    loadAllArtworks();
+    const urlParams = new URLSearchParams(window.location.search);
+    if (!urlParams.has("art")) {
+      loadAllArtworks();
+    }
+  } catch (error) {
+    console.error("Error during DOMContentLoaded event handler:", error);
   }
 });
